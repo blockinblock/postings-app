@@ -1,0 +1,9 @@
+<div class="container">
+  <button class="btn btn-primary" (click)="onLoadPostings()">Back to listings</button>
+  <h2>{{ details.name }}</h2>
+  <h6>{{ details.city}}, {{ details.country }}</h6>
+  <h5>{{ details.jobDescriptionTitle }}</h5>
+  <p [innerHTML]="details.jobDescriptionText | sanitizeHtml"></p>
+  <h5>{{ details.qualificationsTitle }}</h5>
+  <p [innerHTML]="details.qualificationsText | sanitizeHtml"></p>
+</div>

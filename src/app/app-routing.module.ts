@@ -1,7 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { PostingsComponent } from './postings/postings.component';
+import { DetailsComponent } from './details/details.component';
+import { DetailsResolver } from './details/details-resolver.service';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: '', component: PostingsComponent },
+  { path: 'details/:id', component: DetailsComponent, resolve: { details: DetailsResolver } },
+  { path: '**', redirectTo: '' }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
