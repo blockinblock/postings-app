@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Posting } from './posting.model';
@@ -14,9 +14,14 @@ export class PostingsComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   postingsSub: Subscription;
   isFetching = false;
+  error = null;
   listings: Posting[];
-  countries = ['All'];
-  departments = ['All'];
+
+  unfiltered = 'All';
+  countries = [this.unfiltered];
+  departments = [this.unfiltered];
+  filteredCountry = this.unfiltered;
+  filteredDepartment = this.unfiltered;
 
   constructor(private postingsService: PostingsService) { }
 
@@ -26,16 +31,23 @@ export class PostingsComponent implements OnInit, OnDestroy {
       department: new FormControl(this.departments[0])
     });
 
+    this.searchForm.valueChanges.subscribe(value => {
+      console.log(value);
+      this.filteredCountry = value.country;
+      this.filteredDepartment = value.department;
+    });
+
+    this.isFetching = true;
     this.postingsSub = this.postingsService.fetchPostings().subscribe(
       (responseData: Posting[]) => {
-        this.isFetching = true;
+        this.isFetching = false;
         this.listings = responseData;
         this.countries = this.buildFilters(this.countries, responseData, 'country');
         this.departments = this.buildFilters(this.departments, responseData, 'department');
       },
       error => {
         this.isFetching = false;
-        console.log(error.message);
+        this.error = error.message;
       }
     );
   }
@@ -51,6 +63,10 @@ export class PostingsComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     console.log(this.searchForm);
+  }
+
+  onHandleError(): void {
+    this.error = null;
   }
 
   ngOnDestroy(): void {

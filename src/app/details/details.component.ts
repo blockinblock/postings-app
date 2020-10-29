@@ -12,12 +12,20 @@ export class DetailsComponent implements OnInit, OnDestroy {
   listing: { id: number };
   details: Details;
   paramsSubscription: Subscription;
+  isFetching = false;
+  error = null;
 
   constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.isFetching = true;
     this.route.data.subscribe(data => {
       this.details = data['details'];
+      this.isFetching = false;
+    },
+    error => {
+      this.isFetching = false;
+      this.error = error.message;
     });
 
     this.listing = {
@@ -31,6 +39,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
   onLoadPostings(): void {
     this.router.navigate(['']);
+  }
+
+  onHandleError(): void {
+    this.error = null;
   }
 
   ngOnDestroy(): void {

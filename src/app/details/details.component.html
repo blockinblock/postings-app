@@ -1,7 +1,19 @@
 <div class="container">
+  <div *ngIf="isFetching && !error" style="text-align: center;">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  <div class="alert alert-danger" *ngIf="error">
+    <h1>An Error Occurred!</h1>
+    <p>{{ error }}</p>
+    <button class="btn btn-danger" (click)="onHandleError()">OK</button>
+  </div>
+  <br>
   <button class="btn btn-primary" (click)="onLoadPostings()">Back to listings</button>
+  <br>
+  <br>
   <h2>{{ details.name }}</h2>
   <h6>{{ details.city}}, {{ details.country }}</h6>
+  <br>
   <h5>{{ details.jobDescriptionTitle }}</h5>
   <p [innerHTML]="details.jobDescriptionText | sanitizeHtml"></p>
   <h5>{{ details.qualificationsTitle }}</h5>

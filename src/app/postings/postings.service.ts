@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import * as i18IsoCountries from 'i18n-iso-countries';
 
 import { environment } from '../../environments/environment';
@@ -52,6 +52,9 @@ export class PostingsService {
           });
 
           return postingsArr;
+        }),
+        catchError(errorRes => {
+          return throwError(errorRes);
         })
       );
   }
