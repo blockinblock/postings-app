@@ -14,6 +14,8 @@ declare const require;
 })
 export class PostingsService {
 
+  postingsList = [];
+
   constructor(private http: HttpClient) { }
 
   fetchPostings(): Observable<any> {
@@ -34,6 +36,7 @@ export class PostingsService {
             let department: string;
 
             element.hasOwnProperty('id') ? id = element['id'] : id = '';
+            this.postingsList.push(element['id']);
             element.hasOwnProperty('name') ? name = element['name'] : name = '';
 
             if (element.hasOwnProperty('location')) {
