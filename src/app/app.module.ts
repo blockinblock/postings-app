@@ -12,6 +12,7 @@ import { DetailsResolver } from './details/details-resolver.service';
 import { SanitizeHtmlPipe } from './details/sanitize-html.pipe';
 import { LoadingSpinnerComponent } from './shared/loading-spinner.component';
 import { DetailsGuard } from './details/details-guard.service';
+import { State } from './state.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { DetailsGuard } from './details/details-guard.service';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [DetailsResolver, DetailsGuard],
-  bootstrap: [AppComponent]
+  providers: [ DetailsResolver, DetailsGuard, State ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

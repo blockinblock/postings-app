@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { Posting } from './posting.model';
 
+import { Posting } from './posting.model';
 import { PostingsService } from './postings.service';
+import { State, FilterState } from '../state.service';
 
 @Component({
   selector: 'app-postings',
@@ -22,8 +23,9 @@ export class PostingsComponent implements OnInit, OnDestroy {
   departments = [this.unfiltered];
   filteredCountry = this.unfiltered;
   filteredDepartment = this.unfiltered;
+  oldState: FilterState = null;
 
-  constructor(private postingsService: PostingsService) { }
+  constructor(private postingsService: PostingsService, private filterState: State) { }
 
   ngOnInit(): void {
     this.searchForm = new FormGroup({
@@ -31,10 +33,22 @@ export class PostingsComponent implements OnInit, OnDestroy {
       department: new FormControl(this.departments[0])
     });
 
+    // Check if the filters were previously set
+    this.oldState = this.filterState.getState();
+    if (this.oldState !== undefined) {
+      this.filteredCountry = this.oldState['country'];
+      this.filteredDepartment = this.oldState['department'];
+
+      this.searchForm.patchValue({
+        country: this.filteredCountry,
+        department: this.filteredDepartment
+      });
+    }
+
     this.searchForm.valueChanges.subscribe(value => {
-      console.log(value);
       this.filteredCountry = value.country;
       this.filteredDepartment = value.department;
+      this.filterState.saveState(value);
     });
 
     this.isFetching = true;
@@ -59,10 +73,6 @@ export class PostingsComponent implements OnInit, OnDestroy {
       }
     });
     return arr;
-  }
-
-  onSubmit(): void {
-    console.log(this.searchForm);
   }
 
   onHandleError(): void {

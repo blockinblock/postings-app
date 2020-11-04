@@ -37,7 +37,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onLoadPostings(): void {
+  onReturn(): void {
     this.router.navigate(['']);
   }
 

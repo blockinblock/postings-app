@@ -13,7 +13,6 @@ declare const require;
   providedIn: 'root'
 })
 export class PostingsService {
-
   postingsList = [];
 
   constructor(private http: HttpClient) { }
