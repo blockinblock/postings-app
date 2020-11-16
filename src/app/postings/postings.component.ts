@@ -38,11 +38,7 @@ export class PostingsComponent implements OnInit, OnDestroy {
     if (this.oldState !== undefined) {
       this.filteredCountry = this.oldState['country'];
       this.filteredDepartment = this.oldState['department'];
-
-      this.searchForm.patchValue({
-        country: this.filteredCountry,
-        department: this.filteredDepartment
-      });
+      this.resetFilterValues();
     }
 
     this.searchForm.valueChanges.subscribe(value => {
@@ -56,8 +52,11 @@ export class PostingsComponent implements OnInit, OnDestroy {
       (responseData: Posting[]) => {
         this.isFetching = false;
         this.listings = responseData;
-        this.countries = this.buildFilters(this.countries, responseData, 'country');
-        this.departments = this.buildFilters(this.departments, responseData, 'department');
+
+        if (this.listings) {
+          this.countries = this.buildFilters(this.countries, responseData, 'country');
+          this.departments = this.buildFilters(this.departments, responseData, 'department');
+        }
       },
       error => {
         this.isFetching = false;
@@ -73,6 +72,19 @@ export class PostingsComponent implements OnInit, OnDestroy {
       }
     });
     return arr;
+  }
+
+  onReset(): void {
+    this.filteredCountry = this.unfiltered;
+    this.filteredDepartment = this.unfiltered;
+    this.resetFilterValues();
+  }
+
+  resetFilterValues(): void {
+    this.searchForm.patchValue({
+      country: this.filteredCountry,
+      department: this.filteredDepartment
+    });
   }
 
   onHandleError(): void {

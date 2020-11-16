@@ -13,6 +13,7 @@ import { SanitizeHtmlPipe } from './details/sanitize-html.pipe';
 import { LoadingSpinnerComponent } from './shared/loading-spinner.component';
 import { DetailsGuard } from './details/details-guard.service';
 import { State } from './state.service';
+import { ResultsComponent } from './results/results.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { State } from './state.service';
     DetailsComponent,
     SanitizeHtmlPipe,
     FilterPipe,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    ResultsComponent
   ],
   imports: [
     BrowserModule,
