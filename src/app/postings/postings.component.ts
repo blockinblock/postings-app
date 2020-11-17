@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { Posting } from './posting.model';
 import { PostingsService } from './postings.service';
-import { State, FilterState } from '../state.service';
+import { State, FilterState, PostingsState } from '../state.service';
 
 @Component({
   selector: 'app-postings',
@@ -23,9 +23,10 @@ export class PostingsComponent implements OnInit, OnDestroy {
   departments = [this.unfiltered];
   filteredCountry = this.unfiltered;
   filteredDepartment = this.unfiltered;
-  oldState: FilterState = null;
+  oldFilterState: FilterState = null;
+  oldPostingsState: PostingsState = null;
 
-  constructor(private postingsService: PostingsService, private filterState: State) { }
+  constructor(private postingsService: PostingsService, private state: State) { }
 
   ngOnInit(): void {
     this.searchForm = new FormGroup({
@@ -33,39 +34,51 @@ export class PostingsComponent implements OnInit, OnDestroy {
       department: new FormControl(this.departments[0])
     });
 
-    // Check if the filters were previously set
-    this.oldState = this.filterState.getState();
-    if (this.oldState !== undefined) {
-      this.filteredCountry = this.oldState['country'];
-      this.filteredDepartment = this.oldState['department'];
+    // Re-instate postings if previously set
+    this.oldPostingsState = this.state.getPostingsState();
+    if (this.oldPostingsState) {
+      this.oldPostingsState = this.state.getPostingsState();
+      this.listings = this.oldPostingsState.postings;
+      this.buildAllFilters();
+    } else {
+      this.isFetching = true;
+      this.postingsSub = this.postingsService.fetchPostings().subscribe(
+        (responseData: Posting[]) => {
+          this.isFetching = false;
+          this.listings = responseData;
+          this.state.savePostingsState({ postings: responseData });
+          this.buildAllFilters();
+        },
+        error => {
+          this.isFetching = false;
+          this.error = error.message;
+        }
+      );
+    }
+
+    // Re-instate filters if previously set
+    this.oldFilterState = this.state.getFilterState();
+    if (this.oldFilterState !== undefined) {
+      this.filteredCountry = this.oldFilterState['country'];
+      this.filteredDepartment = this.oldFilterState['department'];
       this.resetFilterValues();
     }
 
     this.searchForm.valueChanges.subscribe(value => {
       this.filteredCountry = value.country;
       this.filteredDepartment = value.department;
-      this.filterState.saveState(value);
+      this.state.saveFilterState(value);
     });
-
-    this.isFetching = true;
-    this.postingsSub = this.postingsService.fetchPostings().subscribe(
-      (responseData: Posting[]) => {
-        this.isFetching = false;
-        this.listings = responseData;
-
-        if (this.listings) {
-          this.countries = this.buildFilters(this.countries, responseData, 'country');
-          this.departments = this.buildFilters(this.departments, responseData, 'department');
-        }
-      },
-      error => {
-        this.isFetching = false;
-        this.error = error.message;
-      }
-    );
   }
 
-  buildFilters(arr: Array<any>, data: Posting[], filter: string): Array<string> {
+  buildAllFilters(): void {
+    if (this.listings) {
+      this.countries = this.buildFilter(this.countries, this.listings, 'country');
+      this.departments = this.buildFilter(this.departments, this.listings, 'department');
+    }
+  }
+
+  buildFilter(arr: Array<any>, data: Posting[], filter: string): Array<string> {
     data.forEach(item => {
       if (!arr.includes(item[filter])) {
         arr.push(item[filter]);
@@ -92,6 +105,8 @@ export class PostingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.postingsSub.unsubscribe();
+    if (this.postingsSub) {
+      this.postingsSub.unsubscribe();
+    }
   }
 }

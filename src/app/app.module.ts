@@ -14,6 +14,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner.component';
 import { DetailsGuard } from './details/details-guard.service';
 import { State } from './state.service';
 import { ResultsComponent } from './results/results.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ResultsComponent } from './results/results.component';
     SanitizeHtmlPipe,
     FilterPipe,
     LoadingSpinnerComponent,
-    ResultsComponent
+    ResultsComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

@@ -1,16 +1,31 @@
+import { Posting } from './postings/posting.model';
+
 export interface FilterState {
   country: string;
   department: string;
 }
 
-export class State {
-  private state: FilterState;
+export interface PostingsState {
+  postings: Posting[];
+}
 
-  getState(): FilterState {
-    return this.state;
+export class State {
+  private filterState: FilterState;
+  private postingsState: PostingsState;
+
+  getFilterState(): FilterState {
+    return this.filterState;
   }
 
-  saveState(newState: FilterState): void {
-    this.state = newState;
+  getPostingsState(): PostingsState {
+    return this.postingsState;
+  }
+
+  saveFilterState(newState: FilterState): void {
+    this.filterState = newState;
+  }
+
+  savePostingsState(newState: PostingsState): void {
+    this.postingsState = newState;
   }
 }

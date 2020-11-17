@@ -1,17 +1,17 @@
 <div class="container">
-  <div *ngIf="isFetching && !error" style="text-align: center;">
-    <app-loading-spinner></app-loading-spinner>
-  </div>
-  <div class="alert alert-danger" *ngIf="error">
-    <h1>An Error Occurred!</h1>
-    <p>{{ error }}</p>
-    <button class="btn btn-danger" (click)="onHandleError()">OK</button>
-  </div>
   <div class="row">
-    <h1>SmartRecruiters Job Listings App</h1>
     <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <app-header></app-header>
+      <div *ngIf="isFetching && !error" style="text-align: center;">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+      <div class="alert alert-danger" *ngIf="error">
+        <h1>An Error Occurred!</h1>
+        <p>{{ error }}</p>
+        <button class="btn btn-danger" (click)="onHandleError()">OK</button>
+      </div>
       <form [formGroup]="searchForm">
-        <div class="row align-items-end">
+        <div style="margin-left: 0px;" class="row align-items-end">
           <div style="margin-right: 10px;" class="form-group">
             <label for="country">Select country</label>
             <select
@@ -34,27 +34,29 @@
             <button id="reset" class="btn btn-primary form-control" (click)="onReset()">Reset</button>
           </div>
         </div>
-        <ng-template #noResults>
-          <app-results [results]="0"></app-results>
-        </ng-template>
-        <div *ngIf="listings; else noResults">
-          <div *ngIf="(listings
-            | filter:filteredCountry:'country':unfiltered
-            | filter:filteredDepartment:'department':unfiltered) as results">
-            <app-results [results]="results.length"></app-results>
-            <div
+      </form>
+      <ng-template #noResults>
+        <app-results [results]="0"></app-results>
+      </ng-template>
+      <div *ngIf="listings; else noResults">
+        <div *ngIf="(listings
+          | filter:filteredCountry:'country':unfiltered
+          | filter:filteredDepartment:'department':unfiltered) as results">
+          <app-results [results]="results.length"></app-results>
+          <ul class="list-group">
+            <li
+              class="list-group-item"
               *ngFor="let listing of results; index as i; count as totResults">
               <div class="row" [routerLink]="[ '/details', listing.id ]" style="cursor: pointer">
                 <span>
                   <h6>{{ listing.name }} ({{ listing.id }})</h6>
-                  <p>{{ listing.city }},  {{ listing.country }}</p>
-                  <hr>
+                  {{ listing.city }},  {{ listing.country }}
                 </span>
               </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </div>
