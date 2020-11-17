@@ -8,8 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-git-prod": "ng build --prod --output-path ./docs/ --base-href /co2-app/",
-    "build-git-dev": "ng build --output-path ./docs/ --base-href /co2-app/"
+    "build-git-prod": "ng build --prod --output-path ./docs/ --base-href /postings-app/",
+    "build-git-dev": "ng build --output-path ./docs/ --base-href /postings-app/"
   },
   "private": true,
   "dependencies": {
